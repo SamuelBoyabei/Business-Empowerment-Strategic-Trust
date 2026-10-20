@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEST EMPIRE | Product Marketing</title>
+<style>
+  :root { --gold:#f4bd24; --gold2:#ffdf68; --ink:#080808; --panel:#151515; --muted:#bdbdbd; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#090909; color:#f7f7f7; }
+  header { padding:26px 18px; text-align:center; border-bottom:2px solid var(--gold); background:linear-gradient(120deg,#090909,#28200b,#090909); }
+  header h1 { margin:0; color:var(--gold2); letter-spacing:2px; }
+  header p { margin:8px 0 0; color:#eee; }
+  .wrap { width:min(1150px,94%); margin:24px auto 50px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .toolbar h2 { margin:0; }
+  input, textarea, button { font:inherit; }
+  input[type="search"], input[type="text"], input[type="number"], textarea {
+    width:100%; padding:11px 12px; border:1px solid #555; border-radius:8px; background:#101010; color:white;
+  }
+  .search { max-width:320px; }
+  button { border:0; border-radius:8px; padding:11px 15px; cursor:pointer; font-weight:700; }
+  .primary { background:var(--gold); color:#111; }
+  .secondary { background:#333; color:#fff; border:1px solid #555; }
+  .danger { background:#7d2020; color:white; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:18px; }
+  .product { overflow:hidden; border:1px solid #4c3b12; border-radius:13px; background:linear-gradient(145deg,#191919,#090909); box-shadow:0 8px 22px #0008; }
+  .product img { display:block; width:100%; height:190px; object-fit:cover; background:#222; }
+  .product-body { padding:14px; }
+  .product h3 { margin:0 0 9px; font-size:1.08rem; }
+  .price { color:var(--gold2); font-weight:800; font-size:1.2rem; margin:0 0 12px; }
+  .card-actions { display:flex; gap:8px; }
+  .card-actions button { flex:1; padding:9px 8px; }
+  .empty { padding:30px; border:1px dashed #555; border-radius:12px; color:var(--muted); text-align:center; grid-column:1/-1; }
+  .admin { margin-top:34px; border:1px solid #665018; border-radius:14px; padding:20px; background:#111; }
+  .admin h2 { margin-top:0; color:var(--gold2); }
+  .notice { color:#cfcfcf; line-height:1.5; font-size:.92rem; }
+  .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  .field label { display:block; margin:0 0 6px; font-weight:700; font-size:.92rem; }
+  .field.full { grid-column:1/-1; }
+  .form-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:15px; }
+  .preview { display:flex; align-items:center; gap:12px; margin-top:10px; }
+  .preview img { width:100px; height:75px; object-fit:cover; border-radius:7px; border:1px solid #555; }
+  footer { text-align:center; border-top:1px solid #5c4714; padding:18px; color:#aaa; }
+  @media(max-width:600px) { .form-grid { grid-template-columns:1fr; } .field.full { grid-column:auto; } .toolbar { align-items:stretch; } .search { max-width:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>BEST EMPIRE</h1>
+  <p>Building Today. Empowering Tomorrow.</p>
+</header>
+
+<main class="wrap">
+  <div class="toolbar">
+    <h2>Featured Products & Services</h2>
+    <input class="search" id="searchBox" type="search" placeholder="Search products..." aria-label="Search products">
+  </div>
+  <section id="productGrid" class="grid" aria-live="polite"></section>
+
+  <section class="admin" id="adminPanel">
+    <h2>Admin: Add or Update an Item</h2>
+    <p class="notice">This starter version saves changes in this browser using localStorage. To publish updates for every visitor on a live website, connect this form to a server/database and secure the admin area with login.</p>
+    <form id="productForm">
+      <input type="hidden" id="editId">
+      <div class="form-grid">
+        <div class="field">
+          <label for="title">Item title *</label>
+          <input id="title" type="text" maxlength="100" required placeholder="e.g. Photography Package">
+        </div>
+        <div class="field">
+          <label for="price">Price (SLE) *</label>
+          <input id="price" type="number" min="0" step="0.01" required placeholder="e.g. 250">
+        </div>
+        <div class="field full">
+          <label for="description">Short description (optional)</label>
+          <textarea id="description" rows="2" maxlength="240" placeholder="Brief details about this item"></textarea>
+        </div>
+        <div class="field full">
+          <label for="imageFile">Upload JPEG/PNG image (optional when editing)</label>
+          <input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp">
+          <div class="preview" id="imagePreviewWrap" hidden>
+            <img id="imagePreview" alt="Selected image preview">
+            <span id="imageFileName" class="notice"></span>
+          </div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="primary" type="submit" id="saveButton">Save item</button>
+        <button class="secondary" type="button" id="resetButton">Clear form</button>
+        <a class="secondary" href="storefront.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none;padding:11px 15px;border-radius:8px;">View public storefront</a>
+        <button class="secondary" type="button" id="exportButton">Export product data</button>
+        <button class="secondary" type="button" id="importButton">Import product data</button>
+        <input id="importFile" type="file" accept="application/json" hidden>
+      </div>
+      <p id="formMessage" class="notice" role="status"></p>
+    </form>
+  </section>
+</main>
+<footer>BEST EMPIRE · Innovation · Creativity · Excellence</footer>
+
+<script>
+(() => {
+  const STORAGE_KEY = "bestEmpireProducts_v1";
+  const $ = (id) => document.getElementById(id);
+  const grid = $("productGrid");
+  let selectedImageData = "";
+  let products = loadProducts();
+
+  function starterProducts() {
+    return [
+      { id: makeId(), title: "Photography", price: 250, description: "Events, portraits, products and creative shots.", image: "", imageName: "" },
+      { id: makeId(), title: "Web Design & Development", price: 500, description: "Modern websites and website management.", image: "", imageName: "" },
+      { id: makeId(), title: "Computer Installation & Repair", price: 150, description: "Setup, maintenance, upgrades and support.", image: "", imageName: "" }
+    ];
+  }
+  function makeId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  function loadProducts() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : starterProducts();
+    } catch (e) { return starterProducts(); }
+  }
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+      return true;
+    } catch (e) {
+      $("formMessage").textContent = "Could not save. The image may be too large for browser storage; use a smaller image or connect a server.";
+      return false;
+    }
+  }
+  function safeText(value) { return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch])); }
+  function money(value) {
+    return new Intl.NumberFormat("en-SL", { style:"currency", currency:"SLE", maximumFractionDigits:2 }).format(Number(value) || 0);
+  }
+  function placeholder(title) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420"><rect width="100%" height="100%" fill="#17130a"/><circle cx="320" cy="130" r="75" fill="none" stroke="#f4bd24" stroke-width="4"/><text x="320" y="145" font-size="48" text-anchor="middle" fill="#f4bd24" font-family="Arial">BE</text><text x="320" y="260" font-size="25" text-anchor="middle" fill="#fff" font-family="Arial">${safeText(title).slice(0,30)}</text><text x="320" y="310" font-size="18" text-anchor="middle" fill="#e8c65b" font-family="Arial">BEST EMPIRE</text></svg>`;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+  function render() {
+    const q = $("searchBox").value.trim().toLowerCase();
+    const filtered = products.filter(p => `${p.title} ${p.description || ""}`.toLowerCase().includes(q));
+    grid.innerHTML = "";
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty">No items found. Add a new item in the admin panel.</div>`;
+      return;
+    }
+    filtered.forEach(p => {
+      const card = document.createElement("article");
+      card.className = "product";
+      const img = document.createElement("img");
+      img.src = p.image || placeholder(p.title);
+      img.alt = p.title;
+      img.loading = "lazy";
+      const body = document.createElement("div");
+      body.className = "product-body";
+      body.innerHTML = `<h3>${safeText(p.title)}</h3><p class="price">${money(p.price)}</p><p class="notice">${safeText(p.description || "")}</p><div class="card-actions"><button class="secondary" data-edit="${safeText(p.id)}">Edit</button><button class="danger" data-delete="${safeText(p.id)}">Delete</button></div>`;
+      card.append(img, body);
+      grid.append(card);
+    });
+  }
+  function clearForm() {
+    $("productForm").reset();
+    $("editId").value = "";
+    selectedImageData = "";
+    $("imagePreviewWrap").hidden = true;
+    $("saveButton").textContent = "Save item";
+    $("formMessage").textContent = "";
+  }
+  function editProduct(id) {
+    const p = products.find(item => item.id === id);
+    if (!p) return;
+    $("editId").value = p.id;
+    $("title").value = p.title;
+    $("price").value = p.price;
+    $("description").value = p.description || "";
+    selectedImageData = p.image || "";
+    $("saveButton").textContent = "Update item";
+    if (selectedImageData) {
+      $("imagePreview").src = selectedImageData;
+      $("imageFileName").textContent = p.imageName || "Current image";
+      $("imagePreviewWrap").hidden = false;
+    } else {
+      $("imagePreviewWrap").hidden = true;
+    }
+    $("adminPanel").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  $("productForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const id = $("editId").value;
+    const existing = products.find(p => p.id === id);
+    const file = $("imageFile").files[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        $("formMessage").textContent = "Please choose an image file.";
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        $("formMessage").textContent = "Please use an image under 2 MB for this browser-only demo.";
+        return;
+      }
+      selectedImageData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+    const item = {
+      id: id || makeId(),
+      title: $("title").value.trim(),
+      price: Number($("price").value),
+      description: $("description").value.trim(),
+      image: selectedImageData || (existing ? existing.image : ""),
+      imageName: file ? file.name : (existing ? existing.imageName : "")
+    };
+    if (!item.title || !Number.isFinite(item.price) || item.price < 0) return;
+    if (existing) products = products.map(p => p.id === id ? item : p);
+    else products.unshift(item);
+    if (persist()) {
+      render();
+      clearForm();
+      $("formMessage").textContent = "Item saved in this browser.";
+    }
+  });
+
+  grid.addEventListener("click", (event) => {
+    const editButton = event.target.closest("[data-edit]");
+    const deleteButton = event.target.closest("[data-delete]");
+    if (editButton) editProduct(editButton.dataset.edit);
+    if (deleteButton) {
+      const p = products.find(item => item.id === deleteButton.dataset.delete);
+      if (p && confirm(`Delete "${p.title}"?`)) {
+        products = products.filter(item => item.id !== p.id);
+        persist();
+        render();
+      }
+    }
+  });
+  $("searchBox").addEventListener("input", render);
+  $("resetButton").addEventListener("click", clearForm);
+  $("imageFile").addEventListener("change", () => {
+    const file = $("imageFile").files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      $("formMessage").textContent = "Image is over 2 MB. Choose a smaller image.";
+      $("imageFile").value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      $("imagePreview").src = reader.result;
+      $("imageFileName").textContent = file.name;
+      $("imagePreviewWrap").hidden = false;
+    };
+    reader.readAsDataURL(file);
+  });
+  $("exportButton").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(products, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "best-empire-products.json"; a.click();
+    URL.revokeObjectURL(url);
+  });
+  $("importButton").addEventListener("click", () => $("importFile").click());
+  $("importFile").addEventListener("change", async () => {
+    const file = $("importFile").files[0];
+    if (!file) return;
+    try {
+      const imported = JSON.parse(await file.text());
+      if (!Array.isArray(imported) || !imported.every(p => p.title && Number.isFinite(Number(p.price)))) throw new Error("Invalid format");
+      products = imported.map(p => ({ id:p.id || makeId(), title:String(p.title), price:Number(p.price), description:String(p.description || ""), image:String(p.image || ""), imageName:String(p.imageName || "") }));
+      if (persist()) { render(); $("formMessage").textContent = "Product data imported."; }
+    } catch { $("formMessage").textContent = "Import failed. Choose a valid product JSON file exported from this page."; }
+    $("importFile").value = "";
+  });
+
+  persist();
+  render();
+})();
+</script>
+</body>
+</html>

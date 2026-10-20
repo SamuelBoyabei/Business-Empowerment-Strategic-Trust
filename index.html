@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEST Empire</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="container header-flex">
+    <a href="index.html" class="logo">
+  <img src="images/logo.jpeg" alt="" class="logo-img">
+</a>
+
+            <nav>
+                <a href="#services">Current Sales</a>
+                <a href="#services">Used Sales</a>
+                <a href="#services">Services</a>
+                <a href="#services">Partners</a>
+                <a href="#services">Marketing Team</a>
+                <a href="#services">Adds</a>
+                <a href="#services">News</a>
+                <a href="#promo">Current Offer</a>
+                <a href="#contact" class="btn-nav">Get in Touch</a>
+            </nav>
+        </div>
+    </header>
+
+      <!-- Hero Section -->
+    <section class="hero" id="services">
+        <div class="container">  </div>
+    </section>
+
+    <section class="hero_container">
+<div class="container">
+            <h1>Data-Driven Marketing That Scales Your Brand</h1>
+            <p>We blend creative strategy with performance analytics to help your business acquire more customers and partners.</p> <p>Our aim is to keep life ensurance with growth by creating innovative and responsible trust within your community and at large.</p> <br> 
+
+
+            <h2>With BEST Empire, you are safe on the move!</h2>
+        </div>
+        </section>
+    <!-- Dynamic Advertising Section (Changes on Refresh) -->
+    <section class="promo-section" id="promo">
+        <div class="container grid-2">
+            <div class="promo-image">
+                <img src="<?php echo $current_ad['image']; ?>" alt="<?php echo htmlspecialchars($current_ad['title']); ?>">
+            </div>
+            <div class="promo-text">
+                <span class="badge">Limited Time Offer</span>
+                <h2><?php echo $current_ad['title']; ?></h2>
+                <p><?php echo $current_ad['desc']; ?></p>
+                <a href="#contact" class="btn-primary">Make a demand Now!</a>
+            </div>
+        </div>
+    </section>
+
+    <!---Adverting Hot on sales to capure Users online--->
+
+
+
+    <!-- Contact & Lead Generation Links Section -->
+    <section class="contact-section" id="contact">
+        <div class="container text-center">
+            <h2>Ready to Start Your Project?</h2>
+            <p>Connect with our strategy team instantly through the channels below.</p>
+            
+            <div class="contact-buttons">
+                <!-- WhatsApp Link (Launches app or web client with pre-filled message) -->
+                <a href="https://chat.whatsapp.com/CXdvEv15nOoH6ujQ0FiATh" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="btn-contact whatsapp">
+                   Chat via WhatsApp
+                </a>
+
+                <!-- Email Link (Launches local email client with Subject line preset) -->
+                <a href="mailto:info@://bestempireproduction@gmail.com.com" 
+                   class="btn-contact email">
+                   Send an Email
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; <?php echo date('Y'); ?> BEST Empire Sierra Leone. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

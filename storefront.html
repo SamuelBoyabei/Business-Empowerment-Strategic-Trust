@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEST EMPIRE | Products & Services</title>
+<style>
+  :root { --gold:#f4bd24; --gold2:#ffdf68; --ink:#080808; --muted:#c7c7c7; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:Arial,Helvetica,sans-serif; background:#090909; color:#f7f7f7; }
+  header { padding:30px 18px 26px; text-align:center; border-bottom:2px solid var(--gold); background:linear-gradient(120deg,#090909,#28200b,#090909); }
+  header h1 { margin:0; color:var(--gold2); letter-spacing:2px; }
+  header p { margin:8px 0 0; color:#eee; }
+  .wrap { width:min(1150px,94%); margin:26px auto 50px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .toolbar h2 { margin:0; }
+  input { font:inherit; width:100%; max-width:330px; padding:11px 12px; border:1px solid #555; border-radius:8px; background:#101010; color:white; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:18px; }
+  .product { overflow:hidden; border:1px solid #4c3b12; border-radius:13px; background:linear-gradient(145deg,#191919,#090909); box-shadow:0 8px 22px #0008; }
+  .product img { display:block; width:100%; height:205px; object-fit:cover; background:#222; }
+  .product-body { padding:15px; }
+  .product h3 { margin:0 0 9px; font-size:1.1rem; }
+  .price { color:var(--gold2); font-weight:800; font-size:1.25rem; margin:0 0 12px; }
+  .description { color:#ddd; line-height:1.45; margin:0; }
+  .empty { padding:34px; border:1px dashed #665018; border-radius:12px; color:var(--muted); text-align:center; grid-column:1/-1; }
+  .info { color:#aaa; font-size:.9rem; margin-top:18px; }
+  footer { text-align:center; border-top:1px solid #5c4714; padding:18px; color:#aaa; }
+  @media(max-width:600px) { .toolbar { align-items:stretch; } input { max-width:none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>BEST EMPIRE</h1>
+  <p>Building Today. Empowering Tomorrow.</p>
+</header>
+<main class="wrap">
+  <div class="toolbar">
+    <h2>Products & Services</h2>
+    <input id="searchBox" type="search" placeholder="Search products and services..." aria-label="Search products and services">
+  </div>
+  <section id="productGrid" class="grid" aria-live="polite"></section>
+  <p class="info">Product information is managed by BEST EMPIRE administrators.</p>
+</main>
+<footer>BEST EMPIRE · Innovation · Creativity · Excellence</footer>
+<script>
+(() => {
+  const STORAGE_KEY = "bestEmpireProducts_v1";
+  const grid = document.getElementById("productGrid");
+  const searchBox = document.getElementById("searchBox");
+  let products = [];
+
+  function safeText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, ch => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[ch]));
+  }
+  function money(value) {
+    return new Intl.NumberFormat("en-SL", {
+      style:"currency", currency:"SLE", maximumFractionDigits:2
+    }).format(Number(value) || 0);
+  }
+  function placeholder(title) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420"><rect width="100%" height="100%" fill="#17130a"/><circle cx="320" cy="130" r="75" fill="none" stroke="#f4bd24" stroke-width="4"/><text x="320" y="145" font-size="48" text-anchor="middle" fill="#f4bd24" font-family="Arial">BE</text><text x="320" y="260" font-size="25" text-anchor="middle" fill="#fff" font-family="Arial">${safeText(title).slice(0,30)}</text><text x="320" y="310" font-size="18" text-anchor="middle" fill="#e8c65b" font-family="Arial">BEST EMPIRE</text></svg>`;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+  function render() {
+    const q = searchBox.value.trim().toLowerCase();
+    const filtered = products.filter(p =>
+      `${p.title} ${p.description || ""}`.toLowerCase().includes(q)
+    );
+    grid.innerHTML = "";
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="empty">No products or services have been published yet.</div>`;
+      return;
+    }
+    filtered.forEach(p => {
+      const card = document.createElement("article");
+      card.className = "product";
+      const img = document.createElement("img");
+      img.src = p.image || placeholder(p.title);
+      img.alt = p.title;
+      img.loading = "lazy";
+      const body = document.createElement("div");
+      body.className = "product-body";
+      body.innerHTML = `<h3>${safeText(p.title)}</h3><p class="price">${money(p.price)}</p><p class="description">${safeText(p.description || "")}</p>`;
+      card.append(img, body);
+      grid.append(card);
+    });
+  }
+  function load() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEY);
+      products = data ? JSON.parse(data) : [];
+      if (!Array.isArray(products)) products = [];
+    } catch (e) {
+      products = [];
+    }
+    render();
+  }
+  searchBox.addEventListener("input", render);
+  // Refresh automatically when the admin page saves changes in another tab
+  // on the same website origin.
+  window.addEventListener("storage", event => {
+    if (event.key === STORAGE_KEY || event.key === null) load();
+  });
+  load();
+})();
+</script>
+</body>
+</html>
